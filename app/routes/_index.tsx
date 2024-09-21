@@ -1,7 +1,11 @@
-import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction
+} from "@remix-run/node";
 import { json, useNavigate, useOutletContext } from "@remix-run/react";
 import createSupabaseServer from "utils/supabase.server";
-import { CreateTodoForm } from "~/features/todo";
+import { CreateTodoForm, TodoList } from "~/features/todo";
 
 import { SupabaseOutletContext } from "~/root";
 
@@ -23,6 +27,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return json(null);
 };
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const supabase = createSupabaseServer({ request });
+  const { data } = await supabase.from("todo").select();
+  return json({ data });
+};
+
 export default function Index() {
   const navigate = useNavigate();
   const { supabase } = useOutletContext<SupabaseOutletContext>();
@@ -42,6 +52,7 @@ export default function Index() {
     <div>
       <h1 className="font-bold">할 일을 만들어보자</h1>
       <CreateTodoForm />
+      <TodoList />
       <button onClick={handleLogout}>로그아웃</button>
     </div>
   );
