@@ -1,9 +1,11 @@
-import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 
 export const CreateTodoForm = () => {
+  const fetcher = useFetcher();
+
   return (
     <div>
-      <Form method="post">
+      <fetcher.Form method="post" action="/api/todo/create">
         <label htmlFor="title">제목</label>
         <input
           id="title"
@@ -19,7 +21,7 @@ export const CreateTodoForm = () => {
           name="desc"
         />
         <button className="border border-solid border-black">만들기</button>
-      </Form>
+      </fetcher.Form>
     </div>
   );
 };
