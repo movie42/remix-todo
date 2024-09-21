@@ -5,7 +5,7 @@ import {
 } from "@supabase/ssr";
 import type { Database } from "db_types";
 
-export default ({ request }: { request: Request }) => {
+const createSupabaseServer = ({ request }: { request: Request }) => {
   const headers = new Headers();
 
   return createServerClient<Database>(
@@ -28,3 +28,5 @@ export default ({ request }: { request: Request }) => {
     }
   );
 };
+
+export default createSupabaseServer;

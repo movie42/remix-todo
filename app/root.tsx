@@ -14,7 +14,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 import { useEffect, useState } from "react";
-import createServerSupabase from "utils/supabase.server";
+import createSupabaseServer from "utils/supabase.server";
 import "./tailwind.css";
 
 type TypedSupabseClient = SupabaseClient<Database>;
@@ -60,7 +60,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!
   };
 
-  const supabase = createServerSupabase({ request });
+  const supabase = createSupabaseServer({ request });
 
   const {
     data: { session }

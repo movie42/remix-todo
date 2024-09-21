@@ -1,52 +1,48 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction
-} from "@remix-run/node";
-import { Form, json, useLoaderData } from "@remix-run/react";
-import Login from "features/auth/ui/login";
-import { RealtimeMessages } from "features/messages";
-import createServerClient from "utils/supabase.server";
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import { json, useNavigate, useOutletContext } from "@remix-run/react";
+import createSupabaseServer from "utils/supabase.server";
+import { CreateTodoForm } from "~/features/todo";
+
+import { SupabaseOutletContext } from "~/root";
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: "Movie App" },
-    { name: "description", content: "Movie App" }
-  ];
+  return [{ title: "todo" }, { name: "description", content: "todo" }];
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const supabase = createServerClient({ request });
-  const { message } = Object.fromEntries(await request.formData());
+  const supabase = createSupabaseServer({ request });
+
+  const { title, desc } = Object.fromEntries(await request.formData());
+
   const { error } = await supabase
-    .from("message")
-    .insert({ message: String(message) });
+    .from("todo")
+    .insert({ title: String(title), desc: String(desc), status: "NONE" });
   if (error) {
     console.log(error);
   }
   return json(null);
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const supabase = createServerClient({ request });
-
-  const { data } = await supabase.from("message").select();
-  return json({ messages: data ?? [] });
-};
-
 export default function Index() {
-  const { messages } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    navigate("/login");
+  };
 
   return (
-    <>
-      <Login />
-      <RealtimeMessages serverMessages={messages} />
-      <Form method="post">
-        <input className="border border-black" type="text" name="message" />
-        <button className="border border-black" type="submit">
-          하하
-        </button>
-      </Form>
-    </>
+    <div>
+      <h1 className="font-bold">할 일을 만들어보자</h1>
+      <CreateTodoForm />
+      <button onClick={handleLogout}>로그아웃</button>
+    </div>
   );
 }
