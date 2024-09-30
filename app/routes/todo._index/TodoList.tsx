@@ -1,26 +1,20 @@
-import { useFetcher, useLoaderData } from "@remix-run/react";
-import React from "react";
-import { loader } from "./route";
-
 export const TodoList = () => {
-  const { data } = useLoaderData<typeof loader>();
+  // const fetcher = useFetcher();
 
-  const fetcher = useFetcher();
-
-  const handleDeleteTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const todoId = e.currentTarget.dataset.id;
-    if (!todoId) {
-      return;
-    }
-    fetcher.submit(
-      { todoId },
-      { method: "delete", action: "/api/todo/delete" }
-    );
-  };
+  // const handleDeleteTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   const todoId = e.currentTarget.dataset.id;
+  //   if (!todoId) {
+  //     return;
+  //   }
+  //   fetcher.submit(
+  //     { todoId },
+  //     { method: "delete", action: "/api/todo/delete" }
+  //   );
+  // };
 
   return (
     <div>
-      {data?.map((value) => (
+      {/* {data?.map((value) => (
         <React.Fragment key={value.id}>
           <div>
             {value.title} {value.desc} {value.status} {value.created_at}
@@ -29,7 +23,7 @@ export const TodoList = () => {
             삭제
           </button>
         </React.Fragment>
-      ))}
+      ))} */}
     </div>
   );
 };

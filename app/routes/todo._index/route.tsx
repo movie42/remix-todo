@@ -1,28 +1,11 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { json, useNavigate, useOutletContext } from "@remix-run/react";
-import createSupabaseServer from "utils/supabase.server";
-import { SupabaseOutletContext } from "~/root";
+import { useNavigate } from "@remix-run/react";
 import { CreateTodoForm } from "./CreateTodoForm";
 import { TodoList } from "./TodoList";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const supabase = createSupabaseServer({ request });
-  const { data } = await supabase.from("todo").select();
-  return json({ data });
-};
-
 export default function TodoIndexPage() {
   const navigate = useNavigate();
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
     navigate("/login");
   };
 
