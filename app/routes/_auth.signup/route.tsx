@@ -1,9 +1,7 @@
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { linkUserToSession, loginUser } from "~/services/auth.server";
-import { createSession } from "~/services/session.server";
-import { sessionCookie } from "~/services/sessionCookie.server";
-import { LoginForm } from "./_LoginForm";
+import { createUser } from "~/services/auth.server";
+import { SignupForm } from "./_SignupForm";
 type ErrorResponse = {
   error: string;
 };
@@ -13,17 +11,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const password = formData.get("password") as string;
 
   try {
-    const user = await loginUser(username, password);
+    await createUser(username, password);
 
-    const sessionId = await createSession(user.username);
-
-    await linkUserToSession(user.username, sessionId);
-
-    return redirect("/todo", {
-      headers: {
-        "Set-Cookie": await sessionCookie.serialize(sessionId)
-      }
-    });
+    return redirect("/login");
   } catch (error) {
     if (error instanceof Error) {
       return json<ErrorResponse>({ error: error.message });
@@ -36,7 +26,7 @@ export default function LoginPage() {
   return (
     <div>
       <Form method="post">
-        <LoginForm />
+        <SignupForm />
       </Form>
       <span>{actionData?.error}</span>
     </div>
