@@ -1,20 +1,51 @@
-import { useNavigate } from "@remix-run/react";
-import { CreateTodoForm } from "./CreateTodoForm";
-import { TodoList } from "./TodoList";
+import { useCallback } from "react";
+import {
+  ReactFlow,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge
+} from "@xyflow/react";
+
+import "@xyflow/react/dist/style.css";
 
 export default function TodoIndexPage() {
-  const navigate = useNavigate();
+  return (
+    <div className="w-screen h-screen">
+      <Flow />
+    </div>
+  );
+}
 
-  const handleLogout = async () => {
-    navigate("/login");
-  };
+const initialNodes = [
+  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
+  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } }
+];
+
+const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+
+function Flow() {
+  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
   return (
-    <div>
-      <h1 className="font-bold">할 일을 만들어보자</h1>
-      <CreateTodoForm />
-      <TodoList />
-      <button onClick={handleLogout}>로그아웃</button>
-    </div>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+    >
+      <MiniMap />
+      <Controls />
+      <Background />
+    </ReactFlow>
   );
 }
